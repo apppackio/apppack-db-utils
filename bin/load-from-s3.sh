@@ -9,8 +9,6 @@ if echo "$HOST" | grep -q "prod"; then
 fi
 
 S3_PATH=$1
-CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/postgres"
-WORKING_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
 echo "Verifying $S3_PATH exists..."
 aws s3 ls $S3_PATH
 
@@ -21,4 +19,4 @@ psql $CONNECT_DB_URL --echo-all -c "CREATE DATABASE \"$NAME\";"
 
 echo "Loading dump from S3..."
 set -x
-aws s3 cp $S3_PATH - | zcat | psql $WORKING_DB_URL
+aws s3 cp $S3_PATH - | pg_restore --no-owner --no-privileges --dbname="$NAME"

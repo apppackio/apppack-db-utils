@@ -6,3 +6,4 @@ RUN set -ex && \
     pip install --no-cache-dir awscli boto3 && \
     aws configure set default.s3.multipart_chunksize 200MB
 COPY ./bin/ /bin/
+ENTRYPOINT ["/bin/entrypoint.sh"]

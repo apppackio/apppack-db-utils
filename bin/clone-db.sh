@@ -3,8 +3,6 @@
 # Create a new database with the <source> used as a template.
 set -euf
 
-export $(parse_database_url.py | xargs)
-
 if echo "$HOST" | grep -q "prod"; then
   echo "This looks like the production database. Refusing to run destructive operation."
   exit 1

@@ -3,8 +3,6 @@
 # The DATABASE_URL will be dropped and recreated from S3
 set -euf
 
-export $(parse_database_url.py | xargs)
-
 if echo "$HOST" | grep -q "prod"; then
   echo "This looks like the production database. Refusing to run destructive operation."
   exit 1

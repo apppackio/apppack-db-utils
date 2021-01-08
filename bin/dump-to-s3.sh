@@ -4,7 +4,7 @@
 # Optionally, a dbname can be supplied as the second argument
 # to override the name from the DATABASE_URL
 set -euf
-export $(parse_database_url.py | xargs)
+
 NAME=${2:-$NAME}
 CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
 echo "Dumping $CONNECT_DB_URL to $1..."

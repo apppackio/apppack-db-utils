@@ -13,9 +13,8 @@ echo "Verifying $S3_PATH exists..."
 aws s3 ls $S3_PATH
 
 echo "Dropping $NAME..."
-psql $CONNECT_DB_URL --echo-all -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$NAME';"
-psql $CONNECT_DB_URL --echo-all -c "DROP DATABASE IF EXISTS \"$NAME\";"
-psql $CONNECT_DB_URL --echo-all -c "CREATE DATABASE \"$NAME\";"
+
+psql --echo-all -c "DROP OWNED BY \"$NAME\" CASCADE;"
 
 echo "Loading dump from S3..."
 set -x

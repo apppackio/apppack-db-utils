@@ -3,11 +3,6 @@
 # Create a new database with the <source> used as a template.
 set -euf
 
-if echo "$HOST" | grep -q "prod"; then
-  echo "This looks like the production database. Refusing to run destructive operation."
-  exit 1
-fi
-
 SOURCE_DB_NAME=$1
 WORKING_DB_NAME=$2
 CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"

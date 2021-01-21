@@ -9,5 +9,5 @@ NAME=${2:-$NAME}
 echo "Dumping $NAME to $1..."
 set -x
 mysqldump --compress --no-tablespaces "$NAME" | gzip -c | aws s3 cp --acl=private - $1
-set +x
+{ set +x; } 2>/dev/null
 echo "Done!"

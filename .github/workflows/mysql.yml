@@ -1,0 +1,14 @@
+name: Test MySQL
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Test
+      run: |
+        cd mysql
+        docker-compose -f docker-compose.test.yml run --rm utils

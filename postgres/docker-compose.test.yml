@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:12
+    command: -c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    environment:
+      POSTGRES_PASSWORD: password
+  s3:
+    image: localstack/localstack-light
+    environment:
+      SERVICES: s3
+      DATA_DIR: /tmp/localstack/data
+  utils:
+    build: .
+    volumes:
+      - ./tests:/root/bin
+    command: /root/bin/tests.sh
+    depends_on:
+      - db
+      - s3
+    environment:
+      DATABASE_URL: postgres://test:password@db:5432/test
+      AWS_ENDPOINT_URL: http://s3:4566
+      AWS_ACCESS_KEY_ID: foo
+      AWS_SECRET_ACCESS_KEY: bar

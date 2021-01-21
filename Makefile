@@ -5,6 +5,11 @@ SHELL := bash
 DOCKER_REGISTRY := lincolnloop
 IMAGE_NAME := apppack-db-utils
 
+.PHONY: test-postgres
+test-postgres:
+	cd postgres; docker-compose -f docker-compose.test.yml run --rm utils
+	cd postgres; docker-compose -f docker-compose.test.yml down
+
 .PHONY: image
 image: ## Make a production docker container build
 	docker build -t $(IMAGE_NAME):$(shell git rev-parse HEAD) .

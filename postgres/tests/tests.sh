@@ -38,3 +38,11 @@ psql test -c "SELECT COUNT(*) FROM tbl" | grep "3"
 load-from-s3.sh "s3://$BUCKET/dump.sql.gz"
 echo -e "\n###### Verify 2 record exists after load..."
 psql test -c "SELECT COUNT(*) FROM tbl" | grep "2"
+
+# Connect as superuser to create a new database
+PGSERVICE_OLD="$PGSERVICE"
+unset PGSERVICE
+USER=postgres HOST=$HOST PORT=$PORT NAME=postgres clone-db.sh test test-clone
+export PGSERVICE="$PGSERVICE_OLD"
+echo -e "\n###### Verify 2 record exists in clone..."
+psql test-clone -c "SELECT COUNT(*) FROM tbl" | grep "2"

@@ -20,15 +20,21 @@ test: test-mysql test-postgres
 
 .PHONY: image
 image: ## Make a production docker container build
-	docker build -t $(IMAGE_NAME):$(shell git rev-parse HEAD) .
+	cd mysql; docker build -t $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) .
+	cd postgres; docker build -t $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) .
 
 .PHONY: push-image
 push-image: image ## Upload a production docker container to the docker registry
-	docker tag $(IMAGE_NAME):$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)
-ifeq ($(shell git rev-parse --abbrev-ref HEAD),master)
-	docker tag $(IMAGE_NAME):$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):latest
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):latest
+	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD)
+	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD)
+
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD)
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD)
+ifeq ($(shell git rev-parse --abbrev-ref HEAD),main)
+	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:latest
+	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:latest
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:latest
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:latest
 endif
 
 # This insanity makes it easy to list available commands with a short description

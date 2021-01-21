@@ -2,7 +2,7 @@ MAKEFLAGS += --warn-undefined-variables
 SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := image
-DOCKER_REGISTRY := lincolnloop
+DOCKER_REGISTRY := public.ecr.aws/d9q4v8a4
 IMAGE_NAME := apppack-db-utils
 
 .PHONY: test-mysql
@@ -25,6 +25,7 @@ image: ## Make a production docker container build
 
 .PHONY: push-image
 push-image: image ## Upload a production docker container to the docker registry
+	aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/d9q4v8a4
 	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD)
 	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD)
 

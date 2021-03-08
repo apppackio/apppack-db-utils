@@ -26,16 +26,20 @@ image: ## Make a production docker container build
 .PHONY: push-image
 push-image: image ## Upload a production docker container to the docker registry
 	aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/d9q4v8a4
-	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD)
-	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD)
+	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)-mysql
+	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)-postgres
 
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD)
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD)
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)-mysql
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(shell git rev-parse HEAD)-postgres
 ifeq ($(shell git rev-parse --abbrev-ref HEAD),main)
-	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:latest
-	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:latest
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-mysql:latest
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME)-postgres:latest
+	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):mysql
+	docker tag $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):aurora-mysql
+	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):postgres
+	docker tag $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) $(DOCKER_REGISTRY)/$(IMAGE_NAME):aurora-postgresql
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):mysql
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):aurora-mysql
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):postgres
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):aurora-postgresql
 endif
 
 # This insanity makes it easy to list available commands with a short description

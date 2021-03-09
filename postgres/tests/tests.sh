@@ -26,15 +26,15 @@ psql test -c "INSERT INTO tbl (name) VALUES ('name1')"
 psql test -c "INSERT INTO tbl (name) VALUES ('name2')"
 
 echo -e "\n###### Starting tests..."
-dump-to-s3.sh "s3://$BUCKET/dump.sql.gz" test
+dump-to-s3.sh "s3://$BUCKET/dump.dump" test
 echo -e "\n###### Verify dump file exists..."
-aws s3 ls "s3://$BUCKET/" | grep dump.sql.gz
+aws s3 ls "s3://$BUCKET/" | grep dump.dump
 
 
 psql test -c "INSERT INTO tbl (name) VALUES ('name3')"
 echo -e "\n###### Verify 3 records exist before load..."
 psql test -c "SELECT COUNT(*) FROM tbl" | grep "3"
 
-load-from-s3.sh "s3://$BUCKET/dump.sql.gz"
+load-from-s3.sh "s3://$BUCKET/dump.dump"
 echo -e "\n###### Verify 2 record exists after load..."
 psql test -c "SELECT COUNT(*) FROM tbl" | grep "2"

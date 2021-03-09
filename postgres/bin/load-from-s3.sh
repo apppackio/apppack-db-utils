@@ -3,11 +3,6 @@
 # The DATABASE_URL will be dropped and recreated from S3
 set -euf
 
-if echo "$HOST" | grep -q "prod"; then
-  echo "This looks like the production database. Refusing to run destructive operation."
-  exit 1
-fi
-
 S3_PATH=$1
 echo "Verifying $S3_PATH exists..."
 aws s3 ls $S3_PATH

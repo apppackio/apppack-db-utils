@@ -13,6 +13,6 @@ psql --echo-all -c "DROP OWNED BY \"$NAME\" CASCADE;"
 
 echo "Loading dump from S3..."
 set -x
-aws s3 cp $S3_PATH - | pg_restore --no-owner --no-privileges --dbname="$NAME"
+aws s3 cp $S3_PATH - | pg_restore --no-owner --no-privileges --schema=public --dbname="$NAME"
 { set +x; } 2>/dev/null
 echo "Done!"

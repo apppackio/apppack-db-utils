@@ -16,7 +16,7 @@ test-postgres:
 	cd postgres; docker-compose -f docker-compose.test.yml down
 
 .PHONY: test
-test: test-mysql test-postgres
+test: test-mysql test-postgres  ## run tests
 
 .PHONY: image
 image: ## Make a production docker container build

@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -euf
+set -euf -o pipefail
 
 export PGSSLMODE=require
 

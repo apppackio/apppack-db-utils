@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 # Usage:  load-from-s3.sh <s3://...>
 # The DATABASE_URL will be dropped and recreated from S3
-set -euf
+set -euf -o pipefail
 
 S3_PATH=$1
 echo "Verifying $S3_PATH exists..."

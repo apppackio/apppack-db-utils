@@ -20,8 +20,8 @@ test: test-mysql test-postgres  ## run tests
 
 .PHONY: image
 image: ## Make a production docker container build
-	cd mysql; docker build -t $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) .
-	cd postgres; docker build -t $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) .
+	cd mysql; docker build --platform linux/amd64 -t $(IMAGE_NAME)-mysql:$(shell git rev-parse HEAD) .
+	cd postgres; docker build  --platform linux/amd64 -t $(IMAGE_NAME)-postgres:$(shell git rev-parse HEAD) .
 
 .PHONY: push-image
 push-image: image ## Upload a production docker container to the docker registry

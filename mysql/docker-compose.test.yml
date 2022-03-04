@@ -1,15 +1,18 @@
 services:
   db:
     image: mysql:5.7
+    platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: password
   s3:
     image: localstack/localstack-light
+    platform: linux/amd64
     environment:
       SERVICES: s3
       DATA_DIR: /tmp/localstack/data
   utils:
     build: .
+    platform: linux/amd64
     volumes:
       - ./tests:/root/bin
     command: /root/bin/tests.sh

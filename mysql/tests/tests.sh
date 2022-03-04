@@ -39,3 +39,6 @@ mysql test --execute "SELECT COUNT(*) FROM tbl" | grep "3"
 load-from-s3.sh "s3://$BUCKET/dump.sql.gz"
 echo -e "\n###### Verify 2 record exists after load..."
 mysql test --execute "SELECT COUNT(*) FROM tbl" | grep "2"
+
+printf "\n###### Verify dump file does not exist after load...\n"
+test ! -f /tmp/db.sql.gz && echo "ok"

@@ -5,10 +5,15 @@
 # to override the name from the DATABASE_URL
 set -euf -o pipefail
 
+cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }
+trap cleanup EXIT
+
 NAME=${2:-$NAME}
 CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
+
 echo "Dumping $CONNECT_DB_URL to $1..."
 set -x
-pg_dump --no-privileges --no-owner --format=custom $CONNECT_DB_URL | aws s3 cp --acl=private - $1
+pg_dump --no-privileges --no-owner --format=custom "$CONNECT_DB_URL" --file=/tmp/db.dump
+aws s3 cp --acl=private /tmp/db.dump "$1"
 { set +x; } 2>/dev/null
 echo "Done!"

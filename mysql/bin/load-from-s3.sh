@@ -3,9 +3,13 @@
 # The DATABASE_URL will be dropped and recreated from S3
 set -euf -o pipefail
 
+cleanup() { rv=$?; if [ -f /tmp/db.sql.gz ]; then shred -u /tmp/db.sql.gz; fi; exit $rv; }
+trap cleanup EXIT
+
 S3_PATH=$1
-echo "Verifying $S3_PATH exists..."
-aws s3 ls $S3_PATH
+
+echo "Downloading $S3_PATH ..."
+aws s3 cp "$S3_PATH" /tmp/db.sql.gz
 
 echo "Drop/create $NAME..."
 
@@ -14,6 +18,6 @@ mysql --execute "CREATE DATABASE "'`'$NAME'`'
 
 echo "Loading $S3_PATH into $NAME..."
 set -x
-aws s3 cp "$S3_PATH" - | gunzip -c | mysql --compress "$NAME"
+gunzip -c /tmp/db.sql.gz | mysql --compress "$NAME"
 { set +x; } 2>/dev/null
 echo "Done!"

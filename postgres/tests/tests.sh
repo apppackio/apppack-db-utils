@@ -38,3 +38,6 @@ psql test -c "SELECT COUNT(*) FROM tbl" | grep "3"
 load-from-s3.sh "s3://$BUCKET/dump.dump"
 echo -e "\n###### Verify 2 record exists after load..."
 psql test -c "SELECT COUNT(*) FROM tbl" | grep "2"
+
+printf "\n###### Verify dump file does not exist after load...\n"
+test ! -f /tmp/db.dump && echo "ok"

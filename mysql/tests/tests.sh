@@ -1,19 +1,18 @@
 #!/bin/sh
 
-set -euf -o pipefail
-echo -e "/usr/local/bin/aws --endpoint-url $AWS_ENDPOINT_URL "'"$@"' > /root/bin/aws
+set -euf
+printf "#!/bin/bash\n/usr/local/bin/aws --endpoint-url %s \"\$@\"\n" "$AWS_ENDPOINT_URL" > /root/bin/aws
 chmod +x /root/bin/aws
-export PATH=/root/bin:$PATH
+export "PATH=/root/bin:$PATH"
 
 BUCKET=bucket
 
-until mysqladmin -u root -h $HOST -P $PORT ping; do
+until mysqladmin -u root -h "$HOST" -P "$PORT" ping; do
   echo "Waiting for MySQL..."
   sleep 3
 done
 
 echo "###### Setup test state"
-set -x
 aws s3api create-bucket --bucket "$BUCKET"
 aws s3 rm --recursive "s3://$BUCKET/"
 mysql -u root --execute 'DROP DATABASE IF EXISTS `test`'
@@ -26,18 +25,18 @@ mysql test --execute "CREATE TABLE tbl (id INT AUTO_INCREMENT PRIMARY KEY, name 
 mysql test --execute "INSERT INTO tbl (name) VALUES ('name1')"
 mysql test --execute "INSERT INTO tbl (name) VALUES ('name2')"
 
-echo -e "\n###### Starting tests..."
+printf "\n###### Starting tests...\n"
 dump-to-s3.sh "s3://$BUCKET/dump.sql.gz" test
-echo -e "\n###### Verify dump file exists..."
+printf "\n###### Verify dump file exists...\n"
 aws s3 ls "s3://$BUCKET/" | grep dump.sql.gz
 
 
 mysql test --execute "INSERT INTO tbl (name) VALUES ('name3')"
-echo -e "\n###### Verify 3 records exist before load..."
+printf "\n###### Verify 3 records exist before load...\n"
 mysql test --execute "SELECT COUNT(*) FROM tbl" | grep "3"
 
 load-from-s3.sh "s3://$BUCKET/dump.sql.gz"
-echo -e "\n###### Verify 2 record exists after load..."
+printf "\n###### Verify 2 record exists after load...\n"
 mysql test --execute "SELECT COUNT(*) FROM tbl" | grep "2"
 
 printf "\n###### Verify dump file does not exist after load...\n"

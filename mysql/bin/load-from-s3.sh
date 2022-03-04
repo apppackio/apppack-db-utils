@@ -10,11 +10,10 @@ S3_PATH=$1
 
 echo "Downloading $S3_PATH ..."
 aws s3 cp "$S3_PATH" /tmp/db.sql.gz
-
 echo "Drop/create $NAME..."
 
-mysql --execute "DROP DATABASE IF EXISTS "'`'$NAME'`'
-mysql --execute "CREATE DATABASE "'`'$NAME'`'
+mysql --execute "DROP DATABASE IF EXISTS "'`'"$NAME"'`'
+mysql --execute "CREATE DATABASE "'`'"$NAME"'`'
 
 echo "Loading $S3_PATH into $NAME..."
 set -x

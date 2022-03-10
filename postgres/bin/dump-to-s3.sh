@@ -14,6 +14,6 @@ CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
 echo "Dumping $CONNECT_DB_URL to $1..."
 set -x
 pg_dump --no-privileges --no-owner --format=custom "$CONNECT_DB_URL" --file=/tmp/db.dump
-aws s3 cp --acl=private /tmp/db.dump "$1"
+aws s3 cp --acl=private --no-progress /tmp/db.dump "$1"
 { set +x; } 2>/dev/null
 echo "Done!"

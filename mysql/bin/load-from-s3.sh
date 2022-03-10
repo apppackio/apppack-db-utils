@@ -9,7 +9,7 @@ trap cleanup EXIT
 S3_PATH=$1
 
 echo "Downloading $S3_PATH ..."
-aws s3 cp "$S3_PATH" /tmp/db.sql.gz
+aws s3 cp --no-progress "$S3_PATH" /tmp/db.sql.gz
 echo "Drop/create $NAME..."
 
 mysql --execute "DROP DATABASE IF EXISTS "'`'"$NAME"'`'

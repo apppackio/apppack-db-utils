@@ -6,7 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
   s3:
-    image: localstack/localstack-light
+    image: localstack/localstack
     platform: linux/amd64
     environment:
       SERVICES: s3

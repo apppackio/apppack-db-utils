@@ -17,6 +17,6 @@ psql --echo-all -c "DROP OWNED BY \"$NAME\" CASCADE;"
 
 echo "Loading dump from S3..."
 set -x
-pg_restore --jobs="${PG_RESTORE_JOBS:-2}" --no-owner --no-privileges --schema=public --dbname="$NAME" /tmp/db.dump
+pg_restore --jobs="${PG_RESTORE_JOBS:-2}" --no-owner --no-privileges --dbname="$NAME" /tmp/db.dump
 { set +x; } 2>/dev/null
 echo "Done!"

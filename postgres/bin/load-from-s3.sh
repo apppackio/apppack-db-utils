@@ -13,7 +13,7 @@ aws s3 cp --no-progress "$S3_PATH" /tmp/db.dump
 
 echo "Dropping $NAME..."
 
-psql --echo-all -c "DROP OWNED BY \"$NAME\" CASCADE;"
+psql --echo-all -c "DROP OWNED BY \"$USER\" CASCADE;"
 
 echo "Loading dump from S3..."
 set -x

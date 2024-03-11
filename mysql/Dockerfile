@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.11-alpine3.17
+FROM --platform=linux/amd64 python:3.12-alpine3.19
 
 ENV AWS_CONFIG_FILE=/.aws_config
 RUN set -ex && \

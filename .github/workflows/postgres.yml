@@ -11,4 +11,4 @@ jobs:
     - name: Test Postgres
       run: |
         cd postgres
-        docker-compose -f docker-compose.test.yml run --rm utils
+        docker compose -f docker-compose.test.yml run --rm utils

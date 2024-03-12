@@ -7,13 +7,13 @@ IMAGE_NAME := apppack-db-utils
 
 .PHONY: test-mysql
 test-mysql:
-	cd mysql; docker-compose -f docker-compose.test.yml run --rm utils
-	cd mysql; docker-compose -f docker-compose.test.yml down
+	cd mysql; docker compose -f docker-compose.test.yml run --rm utils
+	cd mysql; docker compose -f docker-compose.test.yml down
 
 .PHONY: test-postgres
 test-postgres:
-	cd postgres; docker-compose -f docker-compose.test.yml run --rm utils
-	cd postgres; docker-compose -f docker-compose.test.yml down
+	cd postgres; docker compose -f docker-compose.test.yml run --rm utils
+	cd postgres; docker compose -f docker-compose.test.yml down
 
 .PHONY: test
 test: test-mysql test-postgres  ## run tests

@@ -1,7 +1,12 @@
 services:
   db:
-    image: postgres:14
+    image: postgres:${PG_VERSION:-16}
     command: -c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_PASSWORD: password
   s3:
@@ -17,8 +22,10 @@ services:
       - ./tests:/root/bin
     command: /root/bin/tests.sh
     depends_on:
-      - db
-      - s3
+      db:
+        condition: service_healthy
+      s3:
+        condition: service_started
     environment:
       DATABASE_URL: postgres://test:password@db:5432/test
       AWS_ENDPOINT_URL: http://s3:4566

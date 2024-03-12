@@ -6,6 +6,8 @@ set -euf -o pipefail
 cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }
 trap cleanup EXIT
 
+set-pg-version.sh
+
 S3_PATH=$1
 
 echo "Downloading $S3_PATH ..."

@@ -8,6 +8,8 @@ set -euf -o pipefail
 cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }
 trap cleanup EXIT
 
+set-pg-version.sh
+
 NAME=${2:-$NAME}
 CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
 

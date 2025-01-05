@@ -1,11 +1,11 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV AWS_CONFIG_FILE=/.aws_config
 ENV PATH="/opt/postgresql/bin:$PATH"
 
 # Add the PostgreSQL Apt repository
 RUN apt-get update && apt-get install -y wget gnupg && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 # Install PostgreSQL client tools for versions 11–17 and other dependencies

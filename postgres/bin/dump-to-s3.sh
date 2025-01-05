@@ -1,19 +1,29 @@
 #!/bin/bash
 # Usage:  dump-to-s3.sh <s3://...dump> [dbname]
-# Expects a DATABASE_URL environment variable that is the DB to dump
-# Optionally, a dbname can be supplied as the second argument
-# to override the name from the DATABASE_URL
+# Expects a DATABASE_URL environment variable that provides the DB connection details.
+# Optionally, a dbname can be supplied as the second argument to override the name from the DATABASE_URL.
+
 set -euf -o pipefail
 
 cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }
 trap cleanup EXIT
 
-NAME=${2:-$NAME}
-CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
+# Extract database name from DATABASE_URL if not provided as an argument
+DBNAME=${2:-$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\1|')}
+CONNECT_DB_URL="${DATABASE_URL%/*}/$DBNAME"
 
-echo "Dumping $CONNECT_DB_URL to $1..."
+# Get PostgreSQL server version
+SERVER_VERSION=$(psql "$CONNECT_DB_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1)
+PG_DUMP="pg_dump-$SERVER_VERSION"
+
+if ! command -v "$PG_DUMP" &>/dev/null; then
+  echo "Error: pg_dump for version $SERVER_VERSION is not installed." >&2
+  exit 1
+fi
+
+echo "Dumping $CONNECT_DB_URL to $1 using $PG_DUMP..."
 set -x
-pg_dump --no-privileges --no-owner --format=custom "$CONNECT_DB_URL" --file=/tmp/db.dump
+"$PG_DUMP" --no-privileges --no-owner --format=custom "$CONNECT_DB_URL" --file=/tmp/db.dump
 aws s3 cp --acl=private --no-progress /tmp/db.dump "$1"
 { set +x; } 2>/dev/null
 echo "Done!"

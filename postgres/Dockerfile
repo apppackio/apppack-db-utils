@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 ENV AWS_CONFIG_FILE=/.aws_config
 ENV PATH="/opt/postgresql/bin:$PATH"

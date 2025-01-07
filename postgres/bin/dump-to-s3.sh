@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage:  dump-to-s3.sh <s3://...dump> [dbname]
-# Expects a DATABASE_URL environment variable that provides the DB connection details.
-# Optionally, a dbname can be supplied as the second argument to override the name from the DATABASE_URL.
+# Expects a DATABASE_URL environment variable and SERVER_VERSION exported by the entrypoint.
+# Optionally, a dbname can be supplied as the second argument to override the name from DATABASE_URL.
 
 set -euf -o pipefail
 
@@ -12,13 +12,12 @@ trap cleanup EXIT
 DBNAME=${2:-$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\1|')}
 CONNECT_DB_URL="${DATABASE_URL%/*}/$DBNAME"
 
-# Get PostgreSQL server version
-SERVER_VERSION=$(psql "$CONNECT_DB_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1)
+# Use SERVER_VERSION set by the entrypoint
 PG_DUMP="pg_dump-$SERVER_VERSION"
 
 if ! command -v "$PG_DUMP" &>/dev/null; then
-  echo "Error: pg_dump for version $SERVER_VERSION is not installed." >&2
-  exit 1
+  echo "WARNING: pg_dump for version $SERVER_VERSION is not installed. Defaulting to pg_dump-17."
+  PG_DUMP="pg_dump-17"
 fi
 
 echo "Dumping $CONNECT_DB_URL to $1 using $PG_DUMP..."

@@ -5,7 +5,7 @@ ENV PATH="/opt/postgresql/bin:$PATH"
 
 # Add the PostgreSQL Apt repository
 RUN apt-get update && apt-get install -y wget gnupg && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 # Install PostgreSQL client tools for versions 11–17 and other dependencies
@@ -19,13 +19,16 @@ RUN apt-get update && \
         postgresql-client-15 \
         postgresql-client-16 \
         postgresql-client-17 \
-        python3-pip && \
+        python3-venv python3-pip && \
     mkdir -p /opt/postgresql && \
     for version in 11 12 13 14 15 16 17; do \
         ln -s /usr/lib/postgresql/$version/bin/pg_dump /usr/bin/pg_dump-$version && \
         ln -s /usr/lib/postgresql/$version/bin/pg_restore /usr/bin/pg_restore-$version; \
     done && \
-    pip3 install awscli && \
+    # Use a virtual environment to install Python packages
+    python3 -m venv /opt/awscli && \
+    /opt/awscli/bin/pip install --no-cache-dir awscli && \
+    ln -s /opt/awscli/bin/aws /usr/bin/aws && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./bin/ /bin/

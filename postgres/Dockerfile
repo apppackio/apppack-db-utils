@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 ENV AWS_CONFIG_FILE=/.aws_config
-ENV PATH="/opt/postgresql/bin:$PATH"
+ENV PATH="/opt/postgresql/bin:/opt/awscli/bin:$PATH"
 
 # Add the PostgreSQL Apt repository
 RUN apt-get update && apt-get install -y wget gnupg && \
@@ -28,7 +28,7 @@ RUN apt-get update && \
     # Use a virtual environment to install Python packages
     python3 -m venv /opt/awscli && \
     /opt/awscli/bin/pip install --no-cache-dir awscli && \
-    ln -s /opt/awscli/bin/aws /usr/bin/aws && \
+    ln -s /opt/awscli/bin/aws /usr/local/bin/aws && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./bin/ /bin/

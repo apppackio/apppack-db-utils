@@ -1,10 +1,11 @@
 services:
   db:
-    image: mysql:8
+    image: mariadb:10.5
     platform: linux/amd64
-    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
   s3:
     image: localstack/localstack
     platform: linux/amd64
@@ -25,3 +26,6 @@ services:
       AWS_ENDPOINT_URL: http://s3:4566
       AWS_ACCESS_KEY_ID: foo
       AWS_SECRET_ACCESS_KEY: bar
+
+volumes:
+  db_data:

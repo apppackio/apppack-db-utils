@@ -4,25 +4,38 @@ set -euf -o pipefail
 
 export PGSSLMODE=require
 
+wait_for_db() {
+  local retries=30
+  local sleep_time=2
+
+  echo "Waiting for PostgreSQL server to be ready..."
+  until psql "$DATABASE_URL" -c '\q' 2>/dev/null || [ "$retries" -eq 0 ]; do
+    echo "PostgreSQL is unavailable - sleeping ($((retries--)) retries left)..."
+    sleep "$sleep_time"
+  done
+
+  if [ "$retries" -eq 0 ]; then
+    echo "ERROR: PostgreSQL server did not become ready in time."
+    exit 1
+  fi
+
+  echo "PostgreSQL server is ready!"
+}
+
 if [ -z "${DATABASE_URL:-""}" ]; then
   echo "WARNING: DATABASE_URL not found in environment."
 else
-  echo "DEBUG: DATABASE_URL=$DATABASE_URL"
 
   # Extract connection details from DATABASE_URL
   # shellcheck disable=SC2046
   export $(parse_database_url.py | xargs)
 
-  # Log the parsed variables for debugging
-  echo "DEBUG: Parsed variables:"
-  echo "  HOST=$HOST"
-  echo "  PORT=$PORT"
-  echo "  NAME=$NAME"
-  echo "  USER=$USER"
-
   # Setup PGSERVICE so `psql` just does the right thing
   /bin/echo -e "[$NAME]\nhost=$HOST\nport=$PORT\ndbname=$NAME\nuser=$USER" > ~/.pg_service.conf
   export PGSERVICE="$NAME"
+
+  # Wait for PostgreSQL to be ready
+  wait_for_db
 
   # Detect PostgreSQL server version
   SERVER_VERSION=$(psql "$DATABASE_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1 || true)

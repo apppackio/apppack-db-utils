@@ -19,16 +19,15 @@ RUN apt-get update && \
         postgresql-client-15 \
         postgresql-client-16 \
         postgresql-client-17 \
-        python3-venv python3-pip && \
+        python3-pip && \
     mkdir -p /opt/postgresql && \
     for version in 11 12 13 14 15 16 17; do \
         ln -s /usr/lib/postgresql/$version/bin/pg_dump /usr/bin/pg_dump-$version && \
         ln -s /usr/lib/postgresql/$version/bin/pg_restore /usr/bin/pg_restore-$version; \
     done && \
-    # Use a virtual environment to install Python packages
-    python3 -m venv /opt/awscli && \
-    /opt/awscli/bin/pip install --no-cache-dir awscli && \
-    ln -s /opt/awscli/bin/aws /usr/local/bin/aws && \
+    # Install AWS CLI globally
+    pip3 install --no-cache-dir awscli && \
+    ln -s /usr/local/bin/aws /usr/bin/aws && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./bin/ /bin/

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage:  dump-to-s3.sh <s3://...dump> [dbname]
-# Expects a DATABASE_URL environment variable and SERVER_VERSION exported by the entrypoint.
+# Expects a DATABASE_URL environment variable and optionally SERVER_VERSION exported by the entrypoint.
 # Optionally, a dbname can be supplied as the second argument to override the name from DATABASE_URL.
 
 set -euf -o pipefail
@@ -12,9 +12,11 @@ trap cleanup EXIT
 DBNAME=${2:-$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\1|')}
 CONNECT_DB_URL="${DATABASE_URL%/*}/$DBNAME"
 
-# Use SERVER_VERSION set by the entrypoint
+# Default SERVER_VERSION to 17 if not supplied
+SERVER_VERSION=${SERVER_VERSION:-17}
 PG_DUMP="pg_dump-$SERVER_VERSION"
 
+# Fallback to pg_dump-17 if the specified version is not available
 if ! command -v "$PG_DUMP" &>/dev/null; then
   echo "WARNING: pg_dump for version $SERVER_VERSION is not installed. Defaulting to pg_dump-17."
   PG_DUMP="pg_dump-17"

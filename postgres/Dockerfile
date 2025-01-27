@@ -26,6 +26,7 @@ RUN apt-get update && \
         ln -s /usr/lib/postgresql/$version/bin/pg_restore /usr/bin/pg_restore-$version; \
     done && \
     # Install AWS CLI globally
+    rm -f /usr/lib/python3.11/EXTERNALLY-MANAGED && \
     pip3 install --no-cache-dir awscli && \
     ln -s /usr/local/bin/aws /usr/bin/aws && \
     apt-get clean && rm -rf /var/lib/apt/lists/*

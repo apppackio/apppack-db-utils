@@ -1,4 +1,4 @@
-# HOW TO UPDATE FOR NEW POSTGRESQL VERSIONS:
+# How To Update For New Postgresql Versions:
 
 1. Install the new PostgreSQL client tools:
    Add the new version of `postgresql-client` to the Dockerfile, e.g., `postgresql-client-18`.

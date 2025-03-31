@@ -27,13 +27,17 @@ psql test -c "INSERT INTO tbl (name) VALUES ('name2')"
 
 printf "\n###### Testing SERVER_VERSION override...\n"
 export SERVER_VERSION=17
-dump-to-s3.sh "s3://$BUCKET/explicit.dump" test
-aws s3 ls "s3://$BUCKET/" | grep explicit.dump
+DUMP_LOG=$(dump-to-s3.sh "s3://$BUCKET/explicit.dump" test 2>&1)
+echo "$DUMP_LOG" | grep "using pg_dump-17" > /dev/null
+aws s3 ls "s3://$BUCKET/" | grep explicit.dump > /dev/null
+echo "✅ pg_dump-17 used as expected with SERVER_VERSION=17"
 
 printf "\n###### Testing fallback with unset SERVER_VERSION...\n"
 unset SERVER_VERSION
-dump-to-s3.sh "s3://$BUCKET/default.dump" test
-aws s3 ls "s3://$BUCKET/" | grep default.dump
+DUMP_LOG=$(dump-to-s3.sh "s3://$BUCKET/default.dump" test 2>&1)
+echo "$DUMP_LOG" | grep "using pg_dump-14" > /dev/null
+aws s3 ls "s3://$BUCKET/" | grep default.dump > /dev/null
+echo "✅ pg_dump-14 used as expected when SERVER_VERSION was unset"
 
 printf "\n###### Starting tests...\n"
 dump-to-s3.sh "s3://$BUCKET/dump.dump" test

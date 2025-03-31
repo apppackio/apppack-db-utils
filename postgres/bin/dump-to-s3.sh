@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage:  dump-to-s3.sh <s3://...dump> [dbname]
-# Expects a DATABASE_URL environment variable and optionally SERVER_VERSION exported by the entrypoint.
+# Expects a DATABASE_URL environment variable that is the DB to dump and optionally SERVER_VERSION exported by the entrypoint.
 # Optionally, a dbname can be supplied as the second argument to override the name from DATABASE_URL.
 
 set -euf -o pipefail
@@ -9,8 +9,8 @@ cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit 
 trap cleanup EXIT
 
 # Extract database name from DATABASE_URL if not provided as an argument
-DBNAME=${2:-$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\1|')}
-CONNECT_DB_URL="${DATABASE_URL%/*}/$DBNAME"
+NAME=${2:-$NAME}
+CONNECT_DB_URL="postgres://$USER@$HOST:$PORT/$NAME"
 
 # Try to detect server version if not provided
 if [ -z "${SERVER_VERSION:-}" ]; then

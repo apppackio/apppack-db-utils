@@ -20,8 +20,8 @@ fi
 PG_RESTORE="pg_restore-$SERVER_VERSION"
 
 if ! command -v "$PG_RESTORE" &>/dev/null; then
-  echo "Warning: pg_restore for version $SERVER_VERSION is not installed. Defaulting to pg_restore-17."
-  PG_RESTORE="pg_restore-17"
+  echo "Error: $PG_RESTORE not found in PATH." >&2
+  exit 1
 fi
 
 echo "Dropping all objects owned by \"$USER\" in the database..."

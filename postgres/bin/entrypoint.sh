@@ -10,16 +10,14 @@ wait_for_db() {
 
   echo "Waiting for PostgreSQL server to be ready..."
   until psql "$DATABASE_URL" -c '\q' 2>/dev/null || [ "$retries" -eq 0 ]; do
-    echo "PostgreSQL is unavailable - sleeping ($((retries--)) retries left)..."
+    echo "PostgreSQL is unavailable - ($((retries--)) retries left)..."
     sleep "$sleep_time"
   done
 
   if [ "$retries" -eq 0 ]; then
-    echo "ERROR: PostgreSQL server did not become ready in time."
+    echo "ERROR: PostgreSQL server did not respond."
     exit 1
   fi
-
-  echo "PostgreSQL server is ready!"
 }
 
 if [ -z "${DATABASE_URL:-""}" ]; then

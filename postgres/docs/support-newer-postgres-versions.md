@@ -9,5 +9,5 @@
    and running the script against a PostgreSQL 18 server.
 3. Ensure fallback compatibility:
    Test the script with no `SERVER_VERSION` set to confirm it falls back to the latest version.
-4. Update `dump-to-s3.sh` script's `SERVER_VERSION` default value if the new version becomes the default:
+4. Update `load-from-s3.sh` & `dump-to-s3.sh` script's `SERVER_VERSION` default value if the new version becomes the default:
    Change `SERVER_VERSION=${SERVER_VERSION:-17}` to `SERVER_VERSION=${SERVER_VERSION:-18}`.

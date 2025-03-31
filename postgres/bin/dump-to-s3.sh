@@ -1,7 +1,9 @@
 #!/bin/bash
 # Usage:  dump-to-s3.sh <s3://...dump> [dbname]
-# Expects a DATABASE_URL environment variable that is the DB to dump and optionally SERVER_VERSION exported by the entrypoint.
-# Optionally, a dbname can be supplied as the second argument to override the name from DATABASE_URL.
+# Expects a DATABASE_URL environment variable that is the DB
+# to dump and optionally SERVER_VERSION exported by the entrypoint.
+# Optionally, a dbname can be supplied as the second argument
+# to override the name from DATABASE_URL.
 
 set -euf -o pipefail
 

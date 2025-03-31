@@ -1,6 +1,5 @@
 #!/bin/bash
 # Usage:  load-from-s3.sh <s3://...>
-# The DATABASE_URL will be dropped and recreated from S3
 set -euf -o pipefail
 
 cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }
@@ -11,9 +10,14 @@ S3_PATH=$1
 echo "Downloading $S3_PATH ..."
 aws s3 cp --no-progress "$S3_PATH" /tmp/db.dump
 
-# Ensure SERVER_VERSION is set by the entrypoint
+# Detect server version if not already available
 if [ -z "${SERVER_VERSION:-}" ]; then
-  echo "Warning: SERVER_VERSION not detected. Defaulting to latest (17)."
+  echo "SERVER_VERSION not set. Trying to detect using psql..."
+  SERVER_VERSION=$(psql "$DATABASE_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1 || true)
+fi
+
+if [ -z "$SERVER_VERSION" ]; then
+  echo "Warning: SERVER_VERSION not detected. Defaulting to version 17 (latest)."
   SERVER_VERSION="17"
 fi
 

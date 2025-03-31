@@ -12,14 +12,22 @@ trap cleanup EXIT
 DBNAME=${2:-$(echo "$DATABASE_URL" | sed -E 's|.*/([^/?]+).*|\1|')}
 CONNECT_DB_URL="${DATABASE_URL%/*}/$DBNAME"
 
-# Default SERVER_VERSION to 17 if not supplied
-SERVER_VERSION=${SERVER_VERSION:-17}
+# Try to detect server version if not provided
+if [ -z "${SERVER_VERSION:-}" ]; then
+  echo "SERVER_VERSION not set. Trying to detect using psql..."
+  SERVER_VERSION=$(psql "$CONNECT_DB_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1 || true)
+fi
+
+if [ -z "$SERVER_VERSION" ]; then
+  echo "Warning: SERVER_VERSION not detected. Defaulting to version 17 (latest)."
+  SERVER_VERSION="17"
+fi
+
 PG_DUMP="pg_dump-$SERVER_VERSION"
 
-# Fallback to pg_dump-17 if the specified version is not available
 if ! command -v "$PG_DUMP" &>/dev/null; then
-  echo "WARNING: pg_dump for version $SERVER_VERSION is not installed. Defaulting to pg_dump-17."
-  PG_DUMP="pg_dump-17"
+  echo "ERROR: $PG_DUMP not found in PATH. You must install it or override SERVER_VERSION." >&2
+  exit 1
 fi
 
 echo "Dumping $CONNECT_DB_URL to $1 using $PG_DUMP..."

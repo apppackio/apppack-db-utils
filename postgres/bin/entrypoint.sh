@@ -36,14 +36,20 @@ else
   wait_for_db
 
   # Detect PostgreSQL server version
-  SERVER_VERSION=$(psql "$DATABASE_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1 || true)
+  if [ -z "${SERVER_VERSION:-}" ]; then
+    echo "Attempting to detect PostgreSQL server version..."
+    SERVER_VERSION=$(psql "$DATABASE_URL" -tAc "SHOW server_version;" | cut -d '.' -f 1 || true)
+  fi
+
   if [ -z "$SERVER_VERSION" ]; then
-    echo "WARNING: Unable to detect PostgreSQL server version. Defaulting to latest (17)."
+    echo "WARNING: Unable to detect PostgreSQL version. Defaulting to latest (17)."
     SERVER_VERSION="17"
   else
-    echo "Detected PostgreSQL server version: $SERVER_VERSION"
+    echo "Detected PostgreSQL version: $SERVER_VERSION"
   fi
+
   export SERVER_VERSION
+
 fi
 
 exec "$@"

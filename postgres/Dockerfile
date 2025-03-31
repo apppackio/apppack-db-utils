@@ -29,6 +29,8 @@ RUN apt-get update && \
     rm -f /usr/lib/python3.11/EXTERNALLY-MANAGED && \
     pip3 install --no-cache-dir awscli && \
     ln -s /usr/local/bin/aws /usr/bin/aws && \
+    aws configure set default.s3.multipart_chunksize 200MB && \
+    # Cleanup cache
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./bin/ /bin/

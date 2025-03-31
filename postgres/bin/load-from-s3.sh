@@ -1,5 +1,6 @@
 #!/bin/bash
 # Usage:  load-from-s3.sh <s3://...>
+# The DATABASE_URL will be dropped and recreated from S3
 set -euf -o pipefail
 
 cleanup() { rv=$?; if [ -f /tmp/db.dump ]; then shred -u /tmp/db.dump; fi; exit $rv; }

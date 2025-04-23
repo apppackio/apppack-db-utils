@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y wget gnupg && \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
+        procps \
         postgresql-client-11 \
         postgresql-client-12 \
         postgresql-client-13 \

@@ -1,0 +1,2 @@
+CREATE ROLE test WITH LOGIN PASSWORD 'password';
+CREATE DATABASE test OWNER test;

@@ -42,8 +42,8 @@ else
   fi
 
   if [ -z "$SERVER_VERSION" ]; then
-    echo "WARNING: Unable to detect PostgreSQL version. Defaulting to latest (17)."
-    SERVER_VERSION="17"
+    echo "WARNING: Unable to detect PostgreSQL version. Defaulting to latest (18)."
+    SERVER_VERSION="18"
   else
     echo "Detected PostgreSQL version: $SERVER_VERSION"
   fi

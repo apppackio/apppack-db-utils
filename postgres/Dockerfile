@@ -20,9 +20,10 @@ RUN apt-get update && \
         postgresql-client-15 \
         postgresql-client-16 \
         postgresql-client-17 \
+        postgresql-client-18 \
         python3-pip && \
     mkdir -p /opt/postgresql && \
-    for version in 11 12 13 14 15 16 17; do \
+    for version in 11 12 13 14 15 16 17 18; do \
         ln -s /usr/lib/postgresql/$version/bin/pg_dump /usr/bin/pg_dump-$version && \
         ln -s /usr/lib/postgresql/$version/bin/pg_restore /usr/bin/pg_restore-$version; \
     done && \

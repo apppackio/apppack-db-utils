@@ -18,8 +18,8 @@ if [ -z "${SERVER_VERSION:-}" ]; then
 fi
 
 if [ -z "$SERVER_VERSION" ]; then
-  echo "Warning: SERVER_VERSION not detected. Defaulting to version 17 (latest)."
-  SERVER_VERSION="17"
+  echo "Warning: SERVER_VERSION not detected. Defaulting to version 18 (latest)."
+  SERVER_VERSION="18"
 fi
 
 PG_RESTORE="pg_restore-$SERVER_VERSION"

@@ -25,6 +25,16 @@ mysql test --execute "CREATE TABLE tbl (id INT AUTO_INCREMENT PRIMARY KEY, name 
 mysql test --execute "INSERT INTO tbl (name) VALUES ('name1')"
 mysql test --execute "INSERT INTO tbl (name) VALUES ('name2')"
 
+printf "\n###### Testing portless DATABASE_URL defaults PORT to 3306...\n"
+PARSED_PORTLESS=$(DATABASE_URL="mysql://test:password@db/test" parse_database_url.py)
+echo "$PARSED_PORTLESS" | grep "PORT=3306" > /dev/null
+echo "✅ PORT defaulted to 3306 for a portless DATABASE_URL"
+
+printf "\n###### Testing connection succeeds with a portless DATABASE_URL...\n"
+eval "$PARSED_PORTLESS"
+mysql --host="$HOST" --port="$PORT" --user="$USER" --password="$MYSQL_PWD" "$NAME" --execute "SELECT 1" > /dev/null
+echo "✅ mysql connected successfully using the parsed portless DATABASE_URL"
+
 printf "\n###### Starting tests...\n"
 dump-to-s3.sh "s3://$BUCKET/dump.sql.gz" test
 printf "\n###### Verify dump file exists...\n"

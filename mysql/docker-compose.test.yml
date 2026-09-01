@@ -7,7 +7,12 @@ services:
     volumes:
       - db_data:/var/lib/mysql
   s3:
-    image: localstack/localstack
+    # Pinned: localstack/localstack:latest moved to a unified image in March
+    # 2026 that requires a paid LOCALSTACK_AUTH_TOKEN to boot at all, even
+    # for plain S3. 4.14.0 is the last community-edition tag that starts
+    # without a license. Revisit this pin once the suite can run against a
+    # supported, token-free community image again.
+    image: localstack/localstack:4.14.0
     platform: linux/amd64
     environment:
       SERVICES: s3

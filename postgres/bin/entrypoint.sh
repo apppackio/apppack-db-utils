@@ -7,15 +7,20 @@ export PGSSLMODE=require
 wait_for_db() {
   local retries=30
   local sleep_time=2
+  local last_error=""
 
   echo "Waiting for PostgreSQL server to be ready..."
-  until psql "$DATABASE_URL" -c '\q' 2>/dev/null || [ "$retries" -eq 0 ]; do
+  until last_error=$(psql "$DATABASE_URL" -c '\q' 2>&1 >/dev/null) || [ "$retries" -eq 0 ]; do
     echo "PostgreSQL is unavailable - ($((retries--)) retries left)..."
     sleep "$sleep_time"
   done
 
   if [ "$retries" -eq 0 ]; then
     echo "ERROR: PostgreSQL server did not respond."
+    if [ -n "$last_error" ]; then
+      echo "Last error from psql:"
+      echo "$last_error"
+    fi
     exit 1
   fi
 }

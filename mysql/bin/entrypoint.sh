@@ -9,7 +9,10 @@ else
   # shellcheck disable=SC2046
   export $(parse_database_url.py | xargs)
   # Setup .my.cnf so `mysql` just does the right thing
-  /bin/echo -e "[client]\nhost=$HOST\nport=$PORT\nuser=$USER" > ~/.my.cnf
+  # `database` only goes in [mysql] (read by the interactive mysql client);
+  # putting it in [client] breaks mysqladmin/mysqldump, which also read
+  # [client] but reject `database` as an unknown option.
+  /bin/echo -e "[client]\nhost=$HOST\nport=$PORT\nuser=$USER\n\n[mysql]\ndatabase=$NAME" > ~/.my.cnf
 fi
 
 exec "$@"

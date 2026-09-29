@@ -9,7 +9,7 @@ env = {
     'USER': parsed.username,
     'MYSQL_PWD': parsed.password,
     'HOST': parsed.hostname,
-    'PORT': parsed.port,
+    'PORT': parsed.port or 3306,
     'NAME': parsed.path.strip('/')
 }
 for k, v in env.items():

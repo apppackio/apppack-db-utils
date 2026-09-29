@@ -25,6 +25,14 @@ psql test -c "CREATE TABLE tbl (id SERIAL PRIMARY KEY, name CHAR(255) NOT NULL)"
 psql test -c "INSERT INTO tbl (name) VALUES ('name1')"
 psql test -c "INSERT INTO tbl (name) VALUES ('name2')"
 
+printf "\n###### Testing portless DATABASE_URL defaults PORT to 5432...\n"
+DATABASE_URL="postgres://test:password@db/test" parse_database_url.py | grep "PORT=5432" > /dev/null
+echo "✅ PORT defaulted to 5432 for a portless DATABASE_URL"
+
+printf "\n###### Testing connection succeeds with a portless DATABASE_URL...\n"
+psql "postgres://test:password@db/test" -c '\q'
+echo "✅ psql connected successfully using a portless DATABASE_URL"
+
 printf "\n###### Testing SERVER_VERSION override...\n"
 export SERVER_VERSION=17
 DUMP_LOG=$(dump-to-s3.sh "s3://$BUCKET/explicit.dump" test 2>&1)

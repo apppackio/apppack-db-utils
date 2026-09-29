@@ -8,7 +8,7 @@ env = {
     'USER': parsed.username,
     'PGPASSWORD': parsed.password,
     'HOST': parsed.hostname,
-    'PORT': parsed.port,
+    'PORT': parsed.port or 5432,
     'NAME': parsed.path.strip('/')
 }
 for k, v in env.items():
